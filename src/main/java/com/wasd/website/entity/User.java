@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -15,14 +16,28 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String username;
+    private Long id;
     
+    @Column(name = "username", nullable = false, unique = true, length = 100)
+    private String username;
+
     @Column(name = "password", nullable = false, length = 500)
     private String password;
+
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @Column(name = "registration_date")
+    private LocalDateTime registrationDate;
+
+    @ManyToMany
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
     
-    @Column(name = "enabled", nullable = false)
-    private boolean isEnabled;
-    
-    @OneToMany(mappedBy = "authority")
-    private Set<Authority> authorities;
+    @PostPersist
+    private void postPersist() {
+        registrationDate = LocalDateTime.now();
+    }
 }
