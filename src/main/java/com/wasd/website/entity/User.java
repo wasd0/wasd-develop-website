@@ -30,7 +30,7 @@ public class User {
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

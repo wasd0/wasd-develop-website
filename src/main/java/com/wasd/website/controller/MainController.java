@@ -12,14 +12,4 @@ public class MainController {
     public String homePage() {
         return "home page";
     }
-    
-    @GetMapping("/authenticated")
-    public String authenticated() {
-        return "authenticated part of site";
-    }
-    
-    @GetMapping("/admin")
-    public String admin() {
-        return "admin part of site";
-    }
 }
