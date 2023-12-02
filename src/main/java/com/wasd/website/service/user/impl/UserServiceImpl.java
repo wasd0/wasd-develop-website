@@ -2,7 +2,7 @@ package com.wasd.website.service.user.impl;
 
 import com.wasd.website.entity.Role;
 import com.wasd.website.entity.User;
-import com.wasd.website.model.user.request.CreateUserRequest;
+import com.wasd.website.model.user.request.UserRequest;
 import com.wasd.website.model.user.response.UserResponse;
 import com.wasd.website.repository.UserRepository;
 import com.wasd.website.service.user.UserService;
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public UserResponse create(CreateUserRequest request) throws EntityExistsException {
+    public UserResponse create(UserRequest request) throws EntityExistsException {
         String username = request.getUsername();
 
         if (userRepository.findByUsername(username).isPresent()) {
@@ -69,7 +69,25 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         userRepository.delete(user);
     }
 
-    private User mapCreateRequestToUser(CreateUserRequest request) {
+    @Override
+    public UserResponse update(String username, UserRequest request) throws EntityExistsException {
+        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+
+        if (!user.getUsername().equals(request.getUsername()) 
+                && userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new EntityExistsException("User with username '%s' already exists!");
+        }
+
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        user.setUsername(request.getUsername());
+
+        userRepository.save(user);
+
+        return mapUserToResponse(user);
+    }
+
+    private User mapCreateRequestToUser(UserRequest request) {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());

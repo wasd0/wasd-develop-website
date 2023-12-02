@@ -1,11 +1,12 @@
 package com.wasd.website.controller;
 
-import com.wasd.website.model.user.request.CreateUserRequest;
+import com.wasd.website.model.user.request.UserRequest;
 import com.wasd.website.model.user.response.UserResponse;
 import com.wasd.website.service.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Collection;
 
 @RestController
@@ -29,7 +30,7 @@ public class UserController {
     }
     
     @PostMapping
-    public UserResponse create(@RequestBody CreateUserRequest request) {
+    public UserResponse create(@RequestBody UserRequest request) {
         return userService.create(request);
     }
     
@@ -37,5 +38,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String username) {
         userService.delete(username);
+    }
+    
+    @PatchMapping
+    public UserResponse update(Principal principal, @RequestBody UserRequest request) {
+        return userService.update(principal.getName(), request);
     }
 }
