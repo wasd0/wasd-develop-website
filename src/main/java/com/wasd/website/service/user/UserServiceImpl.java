@@ -6,11 +6,11 @@ import com.wasd.website.model.user.request.CreateUserRequest;
 import com.wasd.website.model.user.response.UserResponse;
 import com.wasd.website.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +28,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = tryFindUserByUsername(username);
+    public UserDetails loadUserByUsername(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                 user.getPassword(), mapRolesToAuthorities(user.getRoles()));
     }
@@ -42,8 +42,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public UserResponse findByUsername(String username) throws UsernameNotFoundException {
-        User user = tryFindUserByUsername(username);
+    public UserResponse findByUsername(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
         return mapUserToResponse(user);
     }
 
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public UserResponse create(CreateUserRequest request) throws EntityExistsException {
         String username = request.getUsername();
 
-        if (userRepository.findByUsername(username) != null) {
+        if (userRepository.findByUsername(username).isPresent()) {
             throw new EntityExistsException(String.format("User with username '%s' already exists!",
                     username));
         }
@@ -61,16 +61,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return mapUserToResponse(user);
     }
 
-    private User tryFindUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("User with username '%s' not found.", username));
-        }
-        
-        return user;
-    }
-    
     private User mapCreateRequestToUser(CreateUserRequest request) {
         User user = new User();
         user.setUsername(request.getUsername());
