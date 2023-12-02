@@ -1,5 +1,6 @@
 package com.wasd.website.config;
 
+import com.wasd.website.model.user.security.UserAuthority;
 import com.wasd.website.model.user.security.UserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,8 +27,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/users").anonymous()
                         .requestMatchers(HttpMethod.PATCH, "/users/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole(UserRole.ADMIN.name())
-                        .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority(UserAuthority.DELETE.name())
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority(UserAuthority.READ.name())
                         .requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name())
                         .requestMatchers("/**").permitAll());
 

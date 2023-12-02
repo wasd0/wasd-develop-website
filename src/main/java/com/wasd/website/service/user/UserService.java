@@ -8,7 +8,10 @@ import java.util.Collection;
 
 public interface UserService {
     Collection<UserResponse> findAll();
+
     UserResponse findByUsername(String username) throws UsernameNotFoundException;
 
     UserResponse create(CreateUserRequest request);
+
+    void delete(String username);
 }

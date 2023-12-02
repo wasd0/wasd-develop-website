@@ -1,19 +1,20 @@
-package com.wasd.website.service.user;
+package com.wasd.website.service.user.impl;
 
 import com.wasd.website.entity.Role;
 import com.wasd.website.entity.User;
 import com.wasd.website.model.user.request.CreateUserRequest;
 import com.wasd.website.model.user.response.UserResponse;
 import com.wasd.website.repository.UserRepository;
+import com.wasd.website.service.user.UserService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Transactional
     public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                 user.getPassword(), mapRolesToAuthorities(user.getRoles()));
     }
@@ -61,6 +63,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return mapUserToResponse(user);
     }
 
+    @Override
+    public void delete(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+        userRepository.delete(user);
+    }
+
     private User mapCreateRequestToUser(CreateUserRequest request) {
         User user = new User();
         user.setUsername(request.getUsername());
@@ -74,9 +82,15 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                 user.getRegistrationDate());
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
+    private Collection<SimpleGrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        roles.forEach(role -> {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            role.getAuthorities().forEach(authority ->
+                    authorities.add(new SimpleGrantedAuthority(authority.getName())));
+        });
+
+        return authorities;
     }
 }

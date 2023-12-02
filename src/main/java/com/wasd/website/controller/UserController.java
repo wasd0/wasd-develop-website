@@ -3,6 +3,7 @@ package com.wasd.website.controller;
 import com.wasd.website.model.user.request.CreateUserRequest;
 import com.wasd.website.model.user.response.UserResponse;
 import com.wasd.website.service.user.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -30,5 +31,11 @@ public class UserController {
     @PostMapping
     public UserResponse create(@RequestBody CreateUserRequest request) {
         return userService.create(request);
+    }
+    
+    @DeleteMapping("/{username}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable String username) {
+        userService.delete(username);
     }
 }
