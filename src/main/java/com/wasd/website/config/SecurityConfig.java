@@ -22,13 +22,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/users/**"))
+                        .ignoringRequestMatchers("/users/**", "/posts/**"))
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/users").anonymous()
                         .requestMatchers(HttpMethod.PATCH, "/users/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority(UserAuthority.DELETE.name())
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority(UserAuthority.READ.name())
+                        .requestMatchers(HttpMethod.POST, "/posts/**").hasAuthority(UserAuthority.CREATE.name())
                         .requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name())
                         .requestMatchers("/**").permitAll());
 

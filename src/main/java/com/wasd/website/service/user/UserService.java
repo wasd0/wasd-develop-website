@@ -15,6 +15,6 @@ public interface UserService {
     UserResponse create(UserRequest request);
 
     void delete(String username);
-    
+
     UserResponse update(String username, UserRequest request) throws EntityExistsException;
 }

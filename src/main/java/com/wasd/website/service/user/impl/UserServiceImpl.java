@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    @Transactional
     public Collection<UserResponse> findAll() {
         return userRepository.findAll().stream()
                 .map(this::mapUserToResponse)
@@ -44,12 +45,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    @Transactional
     public UserResponse findByUsername(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
         return mapUserToResponse(user);
     }
 
     @Override
+    @Transactional
     public UserResponse create(UserRequest request) throws EntityExistsException {
         String username = request.getUsername();
 
@@ -58,7 +61,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     username));
         }
 
-        User user = mapCreateRequestToUser(request);
+        User user = mapRequestToUser(request);
         userRepository.save(user);
         return mapUserToResponse(user);
     }
@@ -70,6 +73,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
+    @Transactional
     public UserResponse update(String username, UserRequest request) throws EntityExistsException {
         User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
 
@@ -87,7 +91,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return mapUserToResponse(user);
     }
 
-    private User mapCreateRequestToUser(UserRequest request) {
+    private User mapRequestToUser(UserRequest request) {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
