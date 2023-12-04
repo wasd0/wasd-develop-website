@@ -27,6 +27,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public Collection<PostResponse> findAll() {
         return postRepository.findAll().stream()
                 .map(this::mapPostToResponse)
@@ -34,6 +35,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public Collection<PostResponse> findByAuthor(String username) {
         UserResponse userResponse = userService.findByUsername(username);
         User user = createUserFromUserResponse(userResponse);
@@ -44,6 +46,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public PostResponse findById(Long id) {
         Post post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         return mapPostToResponse(post);
@@ -55,20 +58,29 @@ public class PostServiceImpl implements PostService {
         if (principal.isEmpty()) {
             throw new EntityNotFoundException("Post creation exception: Cannot create post without authorization");
         }
-
-        //TODO: Set author to post
+        
+        UserResponse user = userService.findByUsername(principal);
         Post post = mapRequestToPost(request);
+        
+        User author = new User();
+        author.setUsername(user.getUsername());
+        author.setId(user.getId());
+        
+        post.setAuthor(author);
+        
         postRepository.save(post);
 
         return mapPostToResponse(post);
     }
 
     @Override
+    @Transactional
     public PostResponse update(Long id, PostRequest request) {
         return null;
     }
 
     @Override
+    @Transactional
     public void delete(Long id, String principal) {
         Post post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
