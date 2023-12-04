@@ -36,17 +36,17 @@ public class PostController {
     
     @PostMapping
     public PostResponse create(@RequestBody PostRequest request, Principal principal) {
-        return postService.create(request, principal.getName());
+        return postService.create(request, principal);
     }
     
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id, Principal principal) {
-        postService.delete(id, principal.getName());
+        postService.delete(id, principal);
     }
     
     @PatchMapping("/{id}")
-    public PostResponse update(@PathVariable Long id, @RequestBody PostRequest request) {
-        return postService.update(id, request);
+    public PostResponse update(@PathVariable Long id, @RequestBody PostRequest request, Principal principal) {
+        return postService.update(id, request, principal);
     }
 }

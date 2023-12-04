@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -54,12 +55,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostResponse create(PostRequest request, String principal) {
-        if (principal.isEmpty()) {
+    public PostResponse create(PostRequest request, Principal principal) {
+        if (principal == null) {
             throw new EntityNotFoundException("Post creation exception: Cannot create post without authorization");
         }
         
-        UserResponse user = userService.findByUsername(principal);
+        UserResponse user = userService.findByUsername(principal.getName());
         Post post = mapRequestToPost(request);
         
         User author = new User();
@@ -75,17 +76,29 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostResponse update(Long id, PostRequest request) {
-        return null;
+    public PostResponse update(Long id, PostRequest request, Principal principal) {
+        Post post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        
+        if (!post.getAuthor().getUsername().equals(principal.getName())) {
+            throw new EntityNotFoundException("Post creation exception: Cannot update post without " +
+                    "authorization");
+        }
+        
+        post.setTitle(request.getTitle());
+        post.setContent(request.getContent());
+        
+        postRepository.save(post);
+        return mapPostToResponse(post);
     }
 
     @Override
     @Transactional
-    public void delete(Long id, String principal) {
+    public void delete(Long id, Principal principal) {
         Post post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
-        if (!post.getAuthor().getUsername().equals(principal)) {
-            throw new EntityNotFoundException();
+        if (!post.getAuthor().getUsername().equals(principal.getName())) {
+            throw new EntityNotFoundException("Post creation exception: Cannot delete post without " +
+                    "authorization");
         }
 
         postRepository.delete(post);
