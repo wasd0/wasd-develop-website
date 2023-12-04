@@ -1,7 +1,7 @@
 package com.wasd.website.service.post;
 
-import com.wasd.website.model.post.request.PostRequest;
-import com.wasd.website.model.post.response.PostResponse;
+import com.wasd.website.model.post.PostRequest;
+import com.wasd.website.model.post.PostResponse;
 
 import java.security.Principal;
 import java.util.Collection;

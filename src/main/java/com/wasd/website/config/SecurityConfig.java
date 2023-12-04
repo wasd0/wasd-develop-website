@@ -1,7 +1,7 @@
 package com.wasd.website.config;
 
-import com.wasd.website.model.user.security.UserAuthority;
-import com.wasd.website.model.user.security.UserRole;
+import com.wasd.website.model.user.UserAuthority;
+import com.wasd.website.model.user.UserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

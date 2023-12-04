@@ -2,9 +2,9 @@ package com.wasd.website.service.post.impl;
 
 import com.wasd.website.entity.Post;
 import com.wasd.website.entity.User;
-import com.wasd.website.model.post.request.PostRequest;
-import com.wasd.website.model.post.response.PostResponse;
-import com.wasd.website.model.user.response.UserResponse;
+import com.wasd.website.model.post.PostRequest;
+import com.wasd.website.model.post.PostResponse;
+import com.wasd.website.model.user.UserResponse;
 import com.wasd.website.repository.PostRepository;
 import com.wasd.website.service.post.PostService;
 import com.wasd.website.service.user.UserService;

@@ -1,4 +1,4 @@
-package com.wasd.website.model.post.request;
+package com.wasd.website.model.post;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

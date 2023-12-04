@@ -1,4 +1,4 @@
-package com.wasd.website.model.user.request;
+package com.wasd.website.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

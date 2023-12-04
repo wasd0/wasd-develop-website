@@ -1,7 +1,7 @@
 package com.wasd.website.service.user;
 
-import com.wasd.website.model.user.request.UserRequest;
-import com.wasd.website.model.user.response.UserResponse;
+import com.wasd.website.model.user.UserRequest;
+import com.wasd.website.model.user.UserResponse;
 import jakarta.persistence.EntityExistsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 

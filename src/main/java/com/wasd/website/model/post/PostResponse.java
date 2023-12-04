@@ -1,6 +1,6 @@
-package com.wasd.website.model.post.response;
+package com.wasd.website.model.post;
 
-import com.wasd.website.model.user.response.UserResponse;
+import com.wasd.website.model.user.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

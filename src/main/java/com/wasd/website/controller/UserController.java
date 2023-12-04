@@ -1,7 +1,7 @@
 package com.wasd.website.controller;
 
-import com.wasd.website.model.user.request.UserRequest;
-import com.wasd.website.model.user.response.UserResponse;
+import com.wasd.website.model.user.UserRequest;
+import com.wasd.website.model.user.UserResponse;
 import com.wasd.website.service.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
