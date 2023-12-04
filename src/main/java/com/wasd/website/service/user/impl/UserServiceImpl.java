@@ -4,7 +4,9 @@ import com.wasd.website.entity.Role;
 import com.wasd.website.entity.User;
 import com.wasd.website.model.user.UserRequest;
 import com.wasd.website.model.user.UserResponse;
+import com.wasd.website.model.user.UserRole;
 import com.wasd.website.repository.UserRepository;
+import com.wasd.website.service.role.RoleService;
 import com.wasd.website.service.user.UserService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,14 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
+    private final RoleService roleService;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleService roleService) {
         this.userRepository = userRepository;
+        this.roleService = roleService;
     }
 
     @Override
@@ -62,6 +67,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
 
         User user = mapRequestToUser(request);
+        Role role = roleService.getUserRole(UserRole.USER);
+
+        user.setRoles(Stream.of(role).collect(Collectors.toSet()));
         userRepository.save(user);
         return mapUserToResponse(user);
     }
@@ -77,7 +85,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public UserResponse update(String username, UserRequest request) throws EntityExistsException {
         User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
 
-        if (!user.getUsername().equals(request.getUsername()) 
+        if (!user.getUsername().equals(request.getUsername())
                 && userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new EntityExistsException("User with username '%s' already exists!");
         }
