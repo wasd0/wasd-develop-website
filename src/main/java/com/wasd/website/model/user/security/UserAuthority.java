@@ -1,5 +1,5 @@
 package com.wasd.website.model.user.security;
 
 public enum UserAuthority {
-    READ, WRITE, DELETE, UPDATE
+    READ, CREATE, DELETE, UPDATE
 }
