@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -67,9 +67,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
 
         User user = mapRequestToUser(request);
-        Role role = roleService.getUserRole(UserRole.USER);
-
-        user.setRoles(Stream.of(role).collect(Collectors.toSet()));
+        user.setRoles(Set.of(roleService.getUserRole(UserRole.USER)));
         userRepository.save(user);
         return mapUserToResponse(user);
     }
