@@ -25,8 +25,8 @@ public class ExceptionController {
     }
     
     @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ExceptionResponse entityNotFound(AuthenticationCredentialsNotFoundException exception) {
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ExceptionResponse authenticationCredentialsNotFound(AuthenticationCredentialsNotFoundException exception) {
         return new ExceptionResponse(exception.getMessage());
     }
 }

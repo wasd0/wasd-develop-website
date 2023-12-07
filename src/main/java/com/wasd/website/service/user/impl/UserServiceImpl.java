@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +27,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, RoleService roleService) {
+    public UserServiceImpl(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -66,8 +69,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
                     username));
         }
 
-        User user = mapRequestToUser(request);
-        user.setRoles(Set.of(roleService.getUserRole(UserRole.USER)));
+        User user = createNewUserFromRequest(request);
         userRepository.save(user);
         return mapUserToResponse(user);
     }
@@ -89,7 +91,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
 
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setUsername(request.getUsername());
 
         userRepository.save(user);
@@ -97,11 +99,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         return mapUserToResponse(user);
     }
 
-    private User mapRequestToUser(UserRequest request) {
+    private User createNewUserFromRequest(UserRequest request) {
         User user = new User();
         user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
+        user.setRoles(Set.of(roleService.getUserRole(UserRole.USER)));
+        
         return user;
     }
 
