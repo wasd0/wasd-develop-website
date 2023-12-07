@@ -40,7 +40,7 @@ public class UserController {
         userService.delete(username);
     }
     
-    @PatchMapping
+    @PutMapping
     public UserResponse update(Principal principal, @RequestBody UserRequest request) {
         return userService.update(principal.getName(), request);
     }

@@ -26,10 +26,11 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/users").anonymous()
-                        .requestMatchers(HttpMethod.PATCH, "/users/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/users/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority(UserAuthority.DELETE.name())
                         .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority(UserAuthority.READ.name())
                         .requestMatchers(HttpMethod.POST, "/posts/**").hasAuthority(UserAuthority.CREATE.name())
+                        .requestMatchers(HttpMethod.PUT, "/posts/**").hasAuthority(UserAuthority.UPDATE.name())
                         .requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name())
                         .requestMatchers("/**").permitAll());
 

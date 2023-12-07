@@ -10,6 +10,7 @@ import java.security.Principal;
 import java.util.Collection;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/posts")
 public class PostController {
     
@@ -45,7 +46,7 @@ public class PostController {
         postService.delete(id, principal);
     }
     
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public PostResponse update(@PathVariable Long id, @RequestBody PostRequest request, Principal principal) {
         return postService.update(id, request, principal);
     }

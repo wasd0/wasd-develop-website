@@ -9,6 +9,7 @@ import com.wasd.website.repository.PostRepository;
 import com.wasd.website.service.post.PostService;
 import com.wasd.website.service.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,7 +81,7 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         
         if (!post.getAuthor().getUsername().equals(principal.getName())) {
-            throw new EntityNotFoundException("Post creation exception: Cannot update post without " +
+            throw new EntityNotFoundException("Post service exception: Cannot update post without " +
                     "authorization");
         }
         
@@ -97,7 +98,7 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
         if (!post.getAuthor().getUsername().equals(principal.getName())) {
-            throw new EntityNotFoundException("Post creation exception: Cannot delete post without " +
+            throw new AuthenticationCredentialsNotFoundException("Post service exception: Cannot delete post without " +
                     "authorization");
         }
 
