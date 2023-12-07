@@ -17,6 +17,11 @@ Personal website with rest services
 
 ![image](https://github.com/wasd0/wasd-develop-website/assets/84603952/c9078369-4fb0-4b4d-82f6-b2235904c136)
 
+<h4>Change to your SQL-driver</h4>
+
+![image](https://github.com/wasd0/wasd-develop-website/assets/84603952/d652b418-07c3-48b0-84e8-45dfe670016b)
+
+
 <br/>
 <hr/>
 <h3>2. Fill data base (roles and authorities)</h1>
@@ -37,4 +42,5 @@ Personal website with rest services
 *  INSERT INTO public.roles_authorities (role_id, authority_id) VALUES (2, 3);
 *  INSERT INTO public.roles_authorities (role_id, authority_id) VALUES (2, 2);
 *  INSERT INTO public.roles_authorities (role_id, authority_id) VALUES (2, 1);
+*  INSERT INTO public.roles_authorities (role_id, authority_id) VALUES (1, 1);
 *  INSERT INTO public.roles_authorities (role_id, authority_id) VALUES (1, 3); <b/>
