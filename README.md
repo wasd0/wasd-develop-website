@@ -11,7 +11,7 @@ Personal website with rest services
 </h4>
 <hr/>
 
-<h3>1. Set your data base properties</h1>
+<h3>1. Set your data base properties</h3>
 <hr/>
 <p><b>src/main/resources/application.yaml</b></p>
 
@@ -44,3 +44,13 @@ Personal website with rest services
 *  INSERT INTO public.roles_authorities (role_id, authority_id) VALUES (2, 1);
 *  INSERT INTO public.roles_authorities (role_id, authority_id) VALUES (1, 1);
 *  INSERT INTO public.roles_authorities (role_id, authority_id) VALUES (1, 3); <b/>
+
+
+<br/>
+<hr/>
+<h3>3. Test REST with Swagger</h3>
+<hr/>
+
+<h4>
+  Path: <a href="https://github.com/wasd0/wasd-develop-website/blob/953a5773d30a311f117739901a7c9f7cb2816a3f/src/main/resources/static/openapi.yaml">src/main/resources/static/openapi.yaml</a> 
+</h4>
