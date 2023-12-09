@@ -3,6 +3,9 @@ info:
   title: Wasd-dev Personal page
   description: Create, edit, delete and view posts.
   version: 0.0.1
+  contact: 
+    name: Shvedov Kirill
+    email: kirshvedov13@gmail.com
 servers:
   - url: "http://localhost:8080"
     description: Development server
@@ -10,7 +13,7 @@ paths:
   /posts:
     get:
       summary: Returns a list of all posts
-      tags: 
+      tags:
         - Posts
       operationId: getAllPosts
       responses:
@@ -27,21 +30,21 @@ paths:
       tags:
         - Posts
       operationId: createPost
-      security: 
+      security:
         - BasicAuth:
-          - write
-      requestBody: 
+            - write
+      requestBody:
         required: true
-        content: 
-          application/json: 
-            schema: 
+        content:
+          application/json:
+            schema:
               $ref: '#/components/schemas/PostRequest'
       responses:
         '200':
           description: Return new post
           content:
             application/json:
-              schema: 
+              schema:
                 $ref: '#/components/schemas/PostResponse'
         '401':
           description: Cannot create post without authorization
@@ -57,7 +60,7 @@ paths:
           in: path
           required: true
           description: post id
-          schema: 
+          schema:
             type: integer
           example: 1
 
@@ -75,22 +78,22 @@ paths:
       tags:
         - Posts
       operationId: updatePostById
-      security: 
+      security:
         - BasicAuth:
-          - update
+            - update
       parameters:
         - name: id
           in: path
           required: true
           description: post id
-          schema: 
+          schema:
             type: integer
           example: 1
-      requestBody: 
+      requestBody:
         required: true
-        content: 
-          application/json: 
-            schema: 
+        content:
+          application/json:
+            schema:
               $ref: '#/components/schemas/PostRequest'
       responses:
         '200':
@@ -105,12 +108,12 @@ paths:
           description: Cannot update post without authorization
     delete:
       summary: Delete users post
-      tags: 
+      tags:
         - Posts
       operationId: deletePostById
-      security: 
+      security:
         - BasicAuth:
-          - delete
+            - delete
       parameters:
         - name: id
           in: path
@@ -135,7 +138,7 @@ paths:
           in: path
           required: true
           description: author username
-          schema: 
+          schema:
             type: string
           example: user
 
@@ -154,9 +157,9 @@ paths:
       tags:
         - Users
       operationId: getAllUsers
-      security: 
+      security:
         - BasicAuth:
-          - read
+            - read
       responses:
         '200':
           description: List of all users
@@ -173,34 +176,34 @@ paths:
       tags:
         - Users
       operationId: createUser
-      requestBody: 
+      requestBody:
         required: true
-        content: 
-          application/json: 
-            schema: 
+        content:
+          application/json:
+            schema:
               $ref: '#/components/schemas/UserRequest'
       responses:
         '200':
           description: Return new user
           content:
             application/json:
-              schema: 
+              schema:
                 $ref: '#/components/schemas/UserResponse'
         '400':
           description: User with this username already exists
     put:
-      summary: Update authorized user 
+      summary: Update authorized user
       tags:
         - Users
       operationId: updateUserByUsername
-      security: 
+      security:
         - BasicAuth:
-          - update
-      requestBody: 
+            - update
+      requestBody:
         required: true
-        content: 
-          application/json: 
-            schema: 
+        content:
+          application/json:
+            schema:
               $ref: '#/components/schemas/UserRequest'
       responses:
         '200':
@@ -217,18 +220,18 @@ paths:
   /users/{username}:
     get:
       summary: Return user by username
-      tags: 
+      tags:
         - Users
       operationId: getUserByUsername
-      security: 
+      security:
         - BasicAuth:
-          - read
+            - read
       parameters:
         - name: username
           in: path
           required: true
           description: username
-          schema: 
+          schema:
             type: string
           example: user
       responses:
@@ -244,12 +247,12 @@ paths:
           description: No users for display
     delete:
       summary: Delete users post
-      tags: 
+      tags:
         - Users
       operationId: deleteUserByUsername
-      security: 
+      security:
         - BasicAuth:
-          - delete
+            - delete
       parameters:
         - name: username
           in: path
@@ -267,14 +270,14 @@ paths:
           description: User not found
 
 components:
-  securitySchemes: 
+  securitySchemes:
     BasicAuth:
       type: http
       scheme: basic
-  schemas: 
+  schemas:
     UserResponse:
       type: object
-      properties: 
+      properties:
         id:
           type: integer
           example: 123
@@ -291,10 +294,10 @@ components:
           example: 2023-03-13T12:00:00+00
     UserRequest:
       type: object
-      required: 
+      required:
         - username
         - password
-      properties: 
+      properties:
         username:
           type: string
           example: user123
@@ -312,7 +315,7 @@ components:
         $ref: '#/components/schemas/UserResponse'
     PostResponse:
       type: object
-      properties: 
+      properties:
         id:
           type: integer
           example: 123
@@ -330,10 +333,10 @@ components:
           example: 2023-03-13T12:00:00+00
     PostRequest:
       type: object
-      required: 
+      required:
         - title
         - content
-      properties: 
+      properties:
         title:
           type: string
           example: Title example
