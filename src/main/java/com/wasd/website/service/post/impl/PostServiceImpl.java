@@ -50,10 +50,11 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostResponse findById(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Post post = getPostOrElseThrow(id);
         User author = post.getAuthor();
         UserResponse authorResponse = new UserResponse(author.getId(), author.getUsername(),
                 author.getEmail(), author.getRegistrationDate());
+        
         return new PostResponse(post.getId(), post.getTitle(), post.getContent(), authorResponse,
                 post.getCreationTime());
     }
@@ -62,7 +63,7 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponse create(PostRequest request, Principal principal) {
         if (principal == null) {
-            throw new EntityNotFoundException("Post creation exception: Cannot create post without authorization");
+            throw new AuthenticationCredentialsNotFoundException("Cannot create post without authorization");
         }
 
         UserResponse user = userService.findByUsername(principal.getName());
@@ -82,11 +83,10 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostResponse update(Long id, PostRequest request, Principal principal) {
-        Post post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Post post = getPostOrElseThrow(id);
 
         if (!post.getAuthor().getUsername().equals(principal.getName())) {
-            throw new EntityNotFoundException("Post service exception: Cannot update post without " +
-                    "authorization");
+            throw new EntityNotFoundException("Cannot update post without authorization");
         }
 
         post.setTitle(request.title());
@@ -99,11 +99,10 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void delete(Long id, Principal principal) {
-        Post post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Post post = getPostOrElseThrow(id);
 
         if (!post.getAuthor().getUsername().equals(principal.getName())) {
-            throw new AuthenticationCredentialsNotFoundException("Post service exception: Cannot delete post without " +
-                    "authorization");
+            throw new AuthenticationCredentialsNotFoundException("Cannot delete post without authorization");
         }
 
         postRepository.delete(post);
@@ -129,5 +128,10 @@ public class PostServiceImpl implements PostService {
         user.setRegistrationDate(userResponse.registrationDate());
         user.setId(userResponse.id());
         return user;
+    }
+
+    private Post getPostOrElseThrow(Long id) {
+        return postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format(
+                "Post with id='%d' not found.", id)));
     }
 }
