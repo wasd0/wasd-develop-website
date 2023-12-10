@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +38,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user =
+                userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(
+                        String.format("User with username '%s' not found", username)));
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                 user.getPassword(), mapRolesToAuthorities(user.getRoles()));
@@ -54,8 +57,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     @Transactional
-    public UserResponse findByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+    public UserResponse findByUsername(String username) throws EntityNotFoundException {
+        User user = getUserOrElseThrowException(username);
+        
         return mapUserToResponse(user);
     }
 
@@ -76,14 +80,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public void delete(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+        User user = getUserOrElseThrowException(username);
         userRepository.delete(user);
     }
 
     @Override
     @Transactional
     public UserResponse update(String username, UserRequest request) throws EntityExistsException {
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+        User user = getUserOrElseThrowException(username);
 
         if (!user.getUsername().equals(request.username())
                 && userRepository.findByUsername(request.username()).isPresent()) {
@@ -105,7 +109,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setEmail(request.email());
         user.setRoles(Set.of(roleService.getUserRole(UserRole.USER)));
-        
+
         return user;
     }
 
@@ -124,5 +128,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         });
 
         return authorities;
+    }
+
+    private User getUserOrElseThrowException(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException(
+                String.format("User with username '%s' not found", username)));
     }
 }
