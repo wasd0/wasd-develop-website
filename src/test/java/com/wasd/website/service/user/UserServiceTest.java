@@ -16,8 +16,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -28,6 +32,8 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private RoleServiceImpl roleService;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
@@ -38,7 +44,7 @@ class UserServiceTest {
         user2.setUsername("user2");
         List<User> userList = List.of(user1, user2);
 
-        Mockito.when(userRepository.findAll()).thenReturn(userList);
+        when(userRepository.findAll()).thenReturn(userList);
     }
 
     @Test
@@ -57,10 +63,11 @@ class UserServiceTest {
         setUpFindByUsernameMethod(username, userRepository.findAll());
         UserRequest createRequest = new UserRequest(username, "123", "123");
         Role role = new Role(1L, "ROLE_USER", null);
-        Mockito.when(roleService.getUserRole(UserRole.USER)).thenReturn(role);
+        when(roleService.getUserRole(UserRole.USER)).thenReturn(role);
+        when(passwordEncoder.encode("123")).thenReturn("123");
 
         userService.create(createRequest);
-        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+        verify(userRepository, Mockito.times(1)).save(Mockito.any());
     }
 
     @Test
@@ -77,21 +84,23 @@ class UserServiceTest {
     @Test
     void updateUsername_whenUsernameNotExists_changeUsername() {
         String username = "user";
+        when(passwordEncoder.encode("")).thenReturn("");
+
         setUpFindByUsernameMethod(username, userRepository.findAll());
         UserRequest request = new UserRequest("user3", "", "");
 
         User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setEmail(request.getEmail());
+        user.setUsername(request.username());
+        user.setPassword(request.password());
+        user.setEmail(request.email());
 
         userService.update(username, request);
-        Mockito.verify(userRepository, Mockito.times(1)).save(user);
+        verify(userRepository, Mockito.times(1)).save(user);
 
     }
 
     private void setUpFindByUsernameMethod(String username, List<User> users) {
-        Mockito.when(userRepository.findByUsername(username))
+        when(userRepository.findByUsername(username))
                 .thenReturn(users.stream()
                         .filter(user -> user.getUsername().equals(username))
                         .findFirst());

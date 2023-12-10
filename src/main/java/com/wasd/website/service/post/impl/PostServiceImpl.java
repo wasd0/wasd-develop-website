@@ -51,7 +51,11 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponse findById(Long id) {
         Post post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        return mapPostToResponse(post);
+        User author = post.getAuthor();
+        UserResponse authorResponse = new UserResponse(author.getId(), author.getUsername(),
+                author.getEmail(), author.getRegistrationDate());
+        return new PostResponse(post.getId(), post.getTitle(), post.getContent(), authorResponse,
+                post.getCreationTime());
     }
 
     @Override
@@ -60,16 +64,16 @@ public class PostServiceImpl implements PostService {
         if (principal == null) {
             throw new EntityNotFoundException("Post creation exception: Cannot create post without authorization");
         }
-        
+
         UserResponse user = userService.findByUsername(principal.getName());
         Post post = mapRequestToPost(request);
-        
+
         User author = new User();
-        author.setUsername(user.getUsername());
-        author.setId(user.getId());
-        
+        author.setUsername(user.username());
+        author.setId(user.id());
+
         post.setAuthor(author);
-        
+
         postRepository.save(post);
 
         return mapPostToResponse(post);
@@ -79,15 +83,15 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponse update(Long id, PostRequest request, Principal principal) {
         Post post = postRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        
+
         if (!post.getAuthor().getUsername().equals(principal.getName())) {
             throw new EntityNotFoundException("Post service exception: Cannot update post without " +
                     "authorization");
         }
-        
-        post.setTitle(request.getTitle());
-        post.setContent(request.getContent());
-        
+
+        post.setTitle(request.title());
+        post.setContent(request.content());
+
         postRepository.save(post);
         return mapPostToResponse(post);
     }
@@ -107,8 +111,8 @@ public class PostServiceImpl implements PostService {
 
     private Post mapRequestToPost(PostRequest request) {
         Post post = new Post();
-        post.setTitle(request.getTitle());
-        post.setContent(request.getContent());
+        post.setTitle(request.title());
+        post.setContent(request.content());
         return post;
     }
 
@@ -120,10 +124,10 @@ public class PostServiceImpl implements PostService {
 
     private User createUserFromUserResponse(UserResponse userResponse) {
         User user = new User();
-        user.setUsername(userResponse.getUsername());
-        user.setEmail(userResponse.getEmail());
-        user.setRegistrationDate(userResponse.getRegistrationDate());
-        user.setId(userResponse.getId());
+        user.setUsername(userResponse.username());
+        user.setEmail(userResponse.email());
+        user.setRegistrationDate(userResponse.registrationDate());
+        user.setId(userResponse.id());
         return user;
     }
 }

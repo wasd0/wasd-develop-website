@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     @Transactional
     public UserResponse create(UserRequest request) throws EntityExistsException {
-        String username = request.getUsername();
+        String username = request.username();
 
         if (userRepository.findByUsername(username).isPresent()) {
             throw new EntityExistsException(String.format("User with username '%s' already exists!",
@@ -85,14 +85,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public UserResponse update(String username, UserRequest request) throws EntityExistsException {
         User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
 
-        if (!user.getUsername().equals(request.getUsername())
-                && userRepository.findByUsername(request.getUsername()).isPresent()) {
+        if (!user.getUsername().equals(request.username())
+                && userRepository.findByUsername(request.username()).isPresent()) {
             throw new EntityExistsException("User with username '%s' already exists!");
         }
 
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setUsername(request.getUsername());
+        user.setEmail(request.email());
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setUsername(request.username());
 
         userRepository.save(user);
 
@@ -101,9 +101,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     private User createNewUserFromRequest(UserRequest request) {
         User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail());
+        user.setUsername(request.username());
+        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setEmail(request.email());
         user.setRoles(Set.of(roleService.getUserRole(UserRole.USER)));
         
         return user;
