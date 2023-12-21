@@ -39,9 +39,4 @@ public class User {
 
     @OneToMany(mappedBy = "author", orphanRemoval = true)
     private Collection<Post> posts;
-
-    @PostPersist
-    private void postPersist() {
-        registrationDate = LocalDateTime.now();
-    }
 }

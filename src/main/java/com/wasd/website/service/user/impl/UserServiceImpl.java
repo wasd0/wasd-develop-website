@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
@@ -108,6 +109,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         user.setUsername(request.username());
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setEmail(request.email());
+        user.setRegistrationDate(LocalDateTime.now());
         user.setRoles(Set.of(roleService.getUserRole(UserRole.USER)));
 
         return user;
