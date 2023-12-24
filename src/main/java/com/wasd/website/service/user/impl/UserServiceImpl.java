@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
@@ -53,7 +52,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public Collection<UserResponse> findAll() {
         return userRepository.findAll().stream()
                 .map(this::mapUserToResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

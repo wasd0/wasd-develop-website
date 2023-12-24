@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -33,7 +32,7 @@ public class PostServiceImpl implements PostService {
     public Collection<PostResponse> findAll() {
         return postRepository.findAll().stream()
                 .map(this::mapPostToResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -44,7 +43,7 @@ public class PostServiceImpl implements PostService {
 
         return postRepository.findByAuthor(user).stream()
                 .map(this::mapPostToResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
